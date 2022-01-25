@@ -1,3 +1,3 @@
-export { default as Vector } from './Vector.js';
-export { default as Point } from './Point.js';
-export { default as Tuple } from './Tuple.js';
+export { default as Vector } from './Vector';
+export { default as Point } from './Point';
+export { default as Tuple } from './Tuple';
