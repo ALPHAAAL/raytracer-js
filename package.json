@@ -5,15 +5,22 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --experimental-specifier-resolution=node src/index.js",
+    "test": "NODE_OPTIONS='--experimental-specifier-resolution=node' ava"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/parser": "^5.10.2",
+    "ava": "^4.0.1",
     "eslint": "^8.7.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.4"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "lodash": "^4.17.21"
   }
 }

@@ -1,4 +1,4 @@
-const EPSILON = 0.00001;
+import { EPSILON } from '../constants';
 
 export default class Tuple {
     constructor(x, y, z, w) {
