@@ -5,18 +5,40 @@ import Color from '../data-structure/Color';
 
 const square = (a) => a * a;
 
-// TODO: refactor to currying and accept arbitrary number of arguments
-const add = (a, b) => {
-    if (a instanceof Color && b instanceof Color) {
-        return new Color(a.red + b.red, a.green + b.green, a.blue + b.blue);
-    }
-    if (a.w + b.w > 1) {
-        throw new Error('Operation not supported');
-    } else if (a.w + b.w === 1) {
-        return new Point(a.x + b.x, a.y + b.y, a.z + b.z);
-    } else {
-        return new Vector(a.x + b.x, a.y + b.y, a.z + b.z);
-    }
+// Usage:
+// add(a)(b)(c)() <- add an empty () to get the value
+const add = (a) => {
+    let x = a.x !== undefined ? a.x : a.red;
+    let y = a.y !== undefined ? a.y : a.green;
+    let z = a.z !== undefined ? a.z : a.blue;
+    let { w } = a;
+
+    const curry = (b) => {
+        if (b === undefined) {
+            if (w === undefined) {
+                return new Color(x, y, z);
+            }
+            if (w > 1) {
+                throw new Error('Operation not supported');
+            } else if (w === 1) {
+                return new Point(x, y, z);
+            } else {
+                return new Vector(x, y, z);
+            }
+        } else {
+            x += b.x !== undefined ? b.x : b.red;
+            y += b.y !== undefined ? b.y : b.green;
+            z += b.z !== undefined ? b.z : b.blue;
+
+            if (w !== undefined) {
+                w += b.w;
+            }
+
+            return curry;
+        }
+    };
+
+    return curry;
 };
 
 const subtract = (a, b) => {
@@ -84,8 +106,8 @@ const hadamardProduct = (c1, c2) => new Color(c1.red * c2.red, c1.green * c2.gre
 // TODO: Thinking if it is good idea to directly mutate the projectile vs creating new instance
 // Performance wise, 1.602s for mutation vs 1.605s for new instance after running this funciton 144 times
 const tick = (env, proj) => {
-    const position = add(proj.position, proj.velocity);
-    const velocity = add(add(proj.velocity, env.gravity), env.wind);
+    const position = add(proj.position)(proj.velocity)();
+    const velocity = add(proj.velocity)(env.gravity)(env.wind)();
 
     proj.set(position, velocity);
 };

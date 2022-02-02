@@ -20,7 +20,7 @@ import {
 test('Test addition - tuple', (t) => {
     const tuple1 = new Tuple(3, -2, 5, 1);
     const tuple2 = new Tuple(-2, 3, 1, 0);
-    const result = add(tuple1, tuple2);
+    const result = add(tuple1)(tuple2)();
     const expectedResult = new Tuple(1, 1, 6, 1);
 
     t.is(result.equal(expectedResult), true);
@@ -29,7 +29,7 @@ test('Test addition - tuple', (t) => {
 test('Test addition - color', (t) => {
     const color1 = new Color(0.9, 0.6, 0.75);
     const color2 = new Color(0.7, 0.1, 0.25);
-    const result = add(color1, color2);
+    const result = add(color1)(color2)();
     const expectedResult = new Color(1.6, 0.7, 1.0);
 
     t.is(result.equal(expectedResult), true);
