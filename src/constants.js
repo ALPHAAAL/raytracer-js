@@ -1,4 +1,4 @@
-const EPSILON = 0.00001;
+const EPSILON = 0.0001;
 
 export {
     EPSILON,

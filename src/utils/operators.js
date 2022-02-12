@@ -1,37 +1,37 @@
+import _ from 'lodash';
 import {
-    Point, Vector, Tuple,
+    Point, Vector, Tuple, Color,
 } from '../data-structure';
-import Color from '../data-structure/Color';
 
 const square = (a) => a * a;
 
 // Usage:
 // add(a)(b)(c)() <- add an empty () to get the value
 const add = (a) => {
-    let x = a.x !== undefined ? a.x : a.red;
-    let y = a.y !== undefined ? a.y : a.green;
-    let z = a.z !== undefined ? a.z : a.blue;
-    let { w } = a;
+    let [x1, y1, z1, w1] = a.getValues();
 
     const curry = (b) => {
         if (b === undefined) {
-            if (w === undefined) {
-                return new Color(x, y, z);
+            if (w1 === undefined) {
+                return new Color(x1, y1, z1);
             }
-            if (w > 1) {
-                throw new Error('Operation not supported');
-            } else if (w === 1) {
-                return new Point(x, y, z);
-            } else {
-                return new Vector(x, y, z);
+            if (w1 === 1) {
+                return new Point(x1, y1, z1);
             }
-        } else {
-            x += b.x !== undefined ? b.x : b.red;
-            y += b.y !== undefined ? b.y : b.green;
-            z += b.z !== undefined ? b.z : b.blue;
+            if (w1 === 0) {
+                return new Vector(x1, y1, z1);
+            }
 
-            if (w !== undefined) {
-                w += b.w;
+            throw new Error('Operation not supported');
+        } else {
+            const [x2, y2, z2, w2] = b.getValues();
+
+            x1 += x2;
+            y1 += y2;
+            z1 += z2;
+
+            if (w2 !== undefined) {
+                w1 += w2;
             }
 
             return curry;
@@ -42,38 +42,45 @@ const add = (a) => {
 };
 
 const subtract = (a, b) => {
+    const [x1, y1, z1, w1] = a.getValues();
+    const [x2, y2, z2, w2] = b.getValues();
+
     if (a instanceof Color && b instanceof Color) {
-        return new Color(a.red - b.red, a.green - b.green, a.blue - b.blue);
+        return new Color(x1 - x2, y1 - y2, z1 - z2);
     }
-    if (a.w - b.w < 0) {
+
+    if (w1 - w2 < 0) {
         throw new Error('Operation not supported');
-    } else if (a.w - b.w === 1) {
-        return new Point(a.x - b.x, a.y - b.y, a.z - b.z);
+    } else if (w1 - w2 === 1) {
+        return new Point(x1 - x2, y1 - y2, z1 - z2);
     } else {
-        return new Vector(a.x - b.x, a.y - b.y, a.z - b.z);
+        return new Vector(x1 - x2, y1 - y2, z1 - z2);
     }
 };
 
 const multiply = (source, multiplier) => {
+    const [x, y, z, w] = source.getValues();
+
     if (source instanceof Color) {
-        return new Color(source.red * multiplier, source.green * multiplier, source.blue * multiplier);
+        return new Color(x * multiplier, y * multiplier, z * multiplier);
     }
 
-    return new Tuple(source.x * multiplier, source.y * multiplier, source.z * multiplier, source.w * multiplier);
+    return new Tuple(x * multiplier, y * multiplier, z * multiplier, w * multiplier);
 };
 
-const negate = (a) => new Tuple(-a.x, -a.y, -a.z, a.w ? -a.w : a.w);
+const negate = (a) => new Tuple(...a.getValues().map((val) => -val));
 
-const magnitude = (a) => Math.sqrt(square(a.x) + square(a.y) + square(a.z) + square(a.w));
+const magnitude = (a) => Math.sqrt(a.getValues().map(square).reduce((acc, cur) => acc + cur), 0);
 
 const normalize = (a) => {
     const m = magnitude(a);
+    const [x, y, z, w] = a.getValues();
 
     if (a instanceof Vector) {
-        return new Vector(a.x / m, a.y / m, a.z / m);
+        return new Vector(x / m, y / m, z / m);
     }
 
-    return new Tuple(a.x / m, a.y / m, a.z / m, a.w / m);
+    return new Tuple(x / m, y / m, z / m, w / m);
 };
 
 // smaller the dot product, the larger the angle between the vectors
@@ -82,7 +89,14 @@ const normalize = (a) => {
 // If the 2 vectors are unit vectors, the dot product is the cosine of the angle between them
 const dotProduct = (a, b) => {
     if (a instanceof Vector && b instanceof Vector) {
-        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        const [x1, y1, z1, w1] = a.getValues();
+        const [x2, y2, z2, w2] = b.getValues();
+
+        return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2;
+    }
+
+    if (_.isArray(a) && _.isArray(b) && a.length === b.length) {
+        return a.map((x, i) => a[i] * b[i]).reduce((m, n) => m + n);
     }
 
     throw new Error('Operation not supported');
@@ -90,18 +104,26 @@ const dotProduct = (a, b) => {
 
 // Cross product will return a vector that is perpendicular the original 2 vectors
 const crossProduct = (a, b) => {
+    const [x1, y1, z1] = a.getValues();
+    const [x2, y2, z2] = b.getValues();
+
     if (a instanceof Vector && b instanceof Vector) {
         return new Vector(
-            a.y * b.z - a.z * b.y,
-            a.z * b.x - a.x * b.z,
-            a.x * b.y - a.y * b.x,
+            y1 * z2 - z1 * y2,
+            z1 * x2 - x1 * z2,
+            x1 * y2 - y1 * x2,
         );
     }
 
     throw new Error('Operation not supported');
 };
 
-const hadamardProduct = (c1, c2) => new Color(c1.red * c2.red, c1.green * c2.green, c1.blue * c2.blue);
+const hadamardProduct = (c1, c2) => {
+    const [r1, g1, b1] = c1.getValues();
+    const [r2, g2, b2] = c2.getValues();
+
+    return new Color(r1 * r2, g1 * g2, b1 * b2);
+};
 
 // TODO: Thinking if it is good idea to directly mutate the projectile vs creating new instance
 // Performance wise, 1.602s for mutation vs 1.605s for new instance after running this funciton 144 times

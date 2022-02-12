@@ -1,16 +1,37 @@
 import { EPSILON } from '../constants';
 
+// TODO: Refactor tuple class to be more generic instead x, y, z, w
+// Similar to Matrix class
+// Set size and set values
 export default class Tuple {
-    constructor(x, y, z, w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+    constructor(...args) {
+        this.values = args;
+        this.size = args.length;
+    }
+
+    getSize() {
+        return this.size;
+    }
+
+    getValues() {
+        return this.values;
+    }
+
+    get(idx) {
+        if (idx >= this.size || idx < 0) {
+            throw new Error('Index out of bound');
+        }
+
+        return this.values[idx];
     }
 
     equal(b) {
+        if (b.getSize() !== this.getSize()) {
+            return false;
+        }
+
         const epsilonEqual = (val1, val2) => Math.abs(val1 - val2) < EPSILON;
 
-        return epsilonEqual(this.x, b.x) && epsilonEqual(this.y, b.y) && epsilonEqual(this.z, b.z) && this.w === b.w;
+        return this.values.every((val, idx) => epsilonEqual(val, b.get(idx)));
     }
 }

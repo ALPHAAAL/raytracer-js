@@ -8,7 +8,7 @@ export default class Canvas {
     constructor(w, h) {
         this.width = w;
         this.height = h;
-        this.pixels = chunk(range(1, this.width * this.height + 1).map(() => new Color(0, 0, 0)), this.width);
+        this.pixels = chunk(range(0, this.width * this.height).map(() => new Color(0, 0, 0)), this.width);
     }
 
     isInRange(x, y) {
@@ -40,7 +40,7 @@ export default class Canvas {
     // P3 <- magic number
     // 80 40 <- image <width> <height> in pixel
     // 255 <- maximum color value (0 - 255)
-    // TODO: write to file
+    // row of color code
     async save(filename = 'out', isSafeToFile = false) {
         let data = `P3\n${this.width} ${this.height}\n255\n`;
         this.pixels.forEach((row) => {
