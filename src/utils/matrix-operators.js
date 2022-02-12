@@ -1,4 +1,6 @@
-import { Matrix, Tuple } from '../data-structure';
+import {
+    Matrix, Point, Tuple, Vector,
+} from '../data-structure';
 import { dotProduct } from './operators';
 
 const multiplyTuple = (m, t) => {
@@ -10,6 +12,14 @@ const multiplyTuple = (m, t) => {
 
     for (let i = 0; i < m.getSize(); i++) {
         result.push(dotProduct(m.getRow(i), t.getValues()));
+    }
+
+    if (t instanceof Point) {
+        return new Point(result[0], result[1], result[2]);
+    }
+
+    if (t instanceof Vector) {
+        return new Vector(result[0], result[1], result[2]);
     }
 
     return new Tuple(...result);

@@ -1,6 +1,8 @@
 import test from 'ava';
 import { EPSILON } from '../../src/constants';
-import { Matrix, Tuple } from '../../src/data-structure';
+import {
+    Matrix, Tuple,
+} from '../../src/data-structure';
 import MatrixOperator from '../../src/utils/matrix-operators';
 
 const epsilonEqual = (a, b) => Math.abs(a - b) < EPSILON;
