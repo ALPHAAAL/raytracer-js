@@ -134,7 +134,7 @@ const tick = (env, proj) => {
     proj.set(position, velocity);
 };
 
-export {
+export default {
     add,
     subtract,
     multiply,

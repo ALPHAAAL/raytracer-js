@@ -2,7 +2,7 @@ import {
     Matrix, Point, Tuple, Vector,
 } from '../data-structure';
 import TransformationMatrix from '../data-structure/TransformationMatrix';
-import { dotProduct } from './operators';
+import Operators from './operators';
 
 export default class MatrixOperators {
     static multiplyTuple(m, t) {
@@ -13,7 +13,7 @@ export default class MatrixOperators {
         const result = [];
 
         for (let i = 0; i < m.getSize(); i++) {
-            result.push(dotProduct(m.getRow(i), t.getValues()));
+            result.push(Operators.dotProduct(m.getRow(i), t.getValues()));
         }
 
         if (t instanceof Point) {
@@ -43,7 +43,7 @@ export default class MatrixOperators {
             const data = [];
 
             for (let j = 0; j < size; j++) {
-                data.push(dotProduct(m1.getRow(i), m2.getCol(j)));
+                data.push(Operators.dotProduct(m1.getRow(i), m2.getCol(j)));
             }
 
             matrix.setRow(i, data);

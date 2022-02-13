@@ -9,12 +9,12 @@ import {
     TransformationMatrix,
 } from './data-structure';
 import MatrixOperators from './utils/matrix-operators';
-import { normalize, tick, multiply } from './utils/operators';
+import Operators from './utils/operators';
 
 // eslint-disable-next-line no-unused-vars
 function drawParabola() {
     const e = new Environment(new Vector(0, -0.1, 0), new Vector(-0.01, 0, 0));
-    const p = new Projectile(new Point(0, 1, 0), multiply(normalize(new Vector(1, 1.8, 0)), 11.25));
+    const p = new Projectile(new Point(0, 1, 0), Operators.multiply(Operators.normalize(new Vector(1, 1.8, 0)), 11.25));
     const WIDTH = 900;
     const HEIGHT = 550;
     const canvas = new Canvas(WIDTH, HEIGHT);
@@ -28,7 +28,7 @@ function drawParabola() {
             return;
         }
 
-        tick(e, p);
+        Operators.tick(e, p);
         count += 1;
 
         if (p.position.getY() >= 0) {
