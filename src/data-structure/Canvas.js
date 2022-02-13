@@ -16,15 +16,18 @@ export default class Canvas {
     }
 
     writePixel(x, y, c) {
+        const roundedX = Math.round(x);
+        const roundedY = Math.round(y);
+
         if (!this.isInRange(x, y)) {
-            throw new Error(`Invalid coordinate ${x} ${y}`);
+            throw new Error(`Invalid coordinate ${roundedX} ${roundedY}`);
         }
 
         if (!(c instanceof Color)) {
             throw new Error('No color provided');
         }
 
-        this.pixels[y][x] = c;
+        this.pixels[roundedY][roundedX] = c;
     }
 
     pixelAt(x, y) {

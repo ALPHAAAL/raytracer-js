@@ -6,3 +6,4 @@ export { default as Projectile } from './Projectile';
 export { default as Color } from './Color';
 export { default as Canvas } from './Canvas';
 export { default as Matrix } from './Matrix';
+export { default as TransformationMatrix } from './TransformationMatrix';

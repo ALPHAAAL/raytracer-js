@@ -1,3 +1,5 @@
+// Depracated, place here for backup
+
 import { Matrix } from '../data-structure';
 
 const translation = (x, y, z) => {
@@ -64,6 +66,20 @@ const rotateZ = (radians) => {
     return m;
 };
 
+// Aka skew
+const shear = (xy, xz, yx, yz, zx, zy) => {
+    const m = new Matrix(4, true);
+
+    m.setElement(0, 1, xy);
+    m.setElement(0, 2, xz);
+    m.setElement(1, 0, yx);
+    m.setElement(1, 2, yz);
+    m.setElement(2, 0, zx);
+    m.setElement(2, 1, zy);
+
+    return m;
+};
+
 export default {
     translation,
     scalaing,
@@ -71,4 +87,5 @@ export default {
     rotateX,
     rotateY,
     rotateZ,
+    shear,
 };
