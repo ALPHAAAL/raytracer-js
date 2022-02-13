@@ -72,11 +72,11 @@ const negate = (a) => new Tuple(...a.getValues().map((val) => -val));
 
 const magnitude = (a) => Math.sqrt(a.getValues().map(square).reduce((acc, cur) => acc + cur), 0);
 
-const normalize = (a) => {
-    const m = magnitude(a);
-    const [x, y, z, w] = a.getValues();
+const normalize = (t) => {
+    const m = magnitude(t);
+    const [x, y, z, w] = t.getValues();
 
-    if (a instanceof Vector) {
+    if (t instanceof Vector) {
         return new Vector(x / m, y / m, z / m);
     }
 

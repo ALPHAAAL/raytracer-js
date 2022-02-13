@@ -6,10 +6,12 @@ import {
     Vector,
     Canvas,
     Color,
-    TransformationMatrix,
+    Ray,
 } from './data-structure';
+import Factory from './utils/factory';
 import MatrixOperators from './utils/matrix-operators';
 import Operators from './utils/operators';
+import RayOperators from './utils/ray-operators';
 
 // eslint-disable-next-line no-unused-vars
 function drawParabola() {
@@ -56,7 +58,7 @@ async function drawClock() {
     const twelve = new Point(0, 1, 0);
 
     for (let i = 0; i < 12; i++) {
-        const transformationMatrix = new TransformationMatrix(MatrixOperators).rotateZ((Math.PI * i) / 6);
+        const transformationMatrix = Factory.createTransformationMatrix().rotateZ((Math.PI * i) / 6);
         const hour = MatrixOperators.multiply(transformationMatrix, twelve);
 
         canvas.writePixel(hour.getX() * RADIUS + WIDTH / 2, hour.getY() * RADIUS + HEIGHT / 2, COLOR);
@@ -64,3 +66,41 @@ async function drawClock() {
 
     await canvas.save('clock', true);
 }
+
+async function castRayOnSphere() {
+    const CANVAS_SIZE = 100;
+    const RAY_ORIGIN = new Point(0, 0, -1);
+    const WALL_Z = 10;
+    const WALL_SIZE = 8;
+    const HALF = WALL_SIZE / 2;
+    const PIXEL_SIZE = WALL_SIZE / CANVAS_SIZE;
+
+    const canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+    const color = new Color(1, 0, 0);
+    const shape = Factory.createSphere();
+
+    // shape.setTransform(Factory.createTransformationMatrix().rotateZ(Math.PI / 4).scale(0.5, 1, 1));
+    // shape.setTransform(Factory.createTransformationMatrix().scale(1, 0.5, 1));
+    // shape.setTransform(Factory.createTransformationMatrix().scale(1, 0.5, 1));
+    // shape.setTransform(Factory.createTransformationMatrix().shear(1, 0, 0, 0, 0, 0).scale(0.5, 1, 1));
+
+    // For each row in canvas
+    for (let canvasY = 0; canvasY < CANVAS_SIZE; canvasY++) {
+        const worldY = HALF - canvasY * PIXEL_SIZE;
+        // For each column in canvas
+        for (let canvasX = 0; canvasX < CANVAS_SIZE; canvasX++) {
+            const worldX = -HALF + canvasX * PIXEL_SIZE;
+            const r = new Ray(RAY_ORIGIN, Operators.normalize(Operators.subtract(new Point(worldX, worldY, WALL_Z), RAY_ORIGIN)));
+            const intersections = RayOperators.intersect(shape, r);
+            const hit = RayOperators.hit(intersections);
+
+            if (hit) {
+                canvas.writePixel(canvasX, canvasY, color);
+            }
+        }
+    }
+
+    canvas.save(`${Date.now()}_castRayOnSphere`, true);
+}
+
+castRayOnSphere();
