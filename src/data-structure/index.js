@@ -10,3 +10,5 @@ export { default as TransformationMatrix } from './TransformationMatrix';
 export { default as Ray } from './Ray';
 export { default as Intersection } from './Intersection';
 export { default as Sphere } from './Sphere';
+export { default as PointLight } from './PointLight';
+export { default as Material } from './Material';

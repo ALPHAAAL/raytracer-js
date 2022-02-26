@@ -7,11 +7,13 @@ import {
     Canvas,
     Color,
     Ray,
+    PointLight,
 } from './data-structure';
 import Factory from './utils/factory';
 import MatrixOperators from './utils/matrix-operators';
 import Operators from './utils/operators';
 import RayOperators from './utils/ray-operators';
+import Shading from './utils/shading';
 
 // eslint-disable-next-line no-unused-vars
 function drawParabola() {
@@ -67,6 +69,46 @@ async function drawClock() {
     await canvas.save('clock', true);
 }
 
+// eslint-disable-next-line no-unused-vars
+async function drawShadedSphere() {
+    const CANVAS_SIZE = 100;
+    const RAY_ORIGIN = new Point(0, 0, -5);
+    const WALL_Z = 10;
+    const WALL_SIZE = 7;
+    const HALF = WALL_SIZE / 2;
+    const PIXEL_SIZE = WALL_SIZE / CANVAS_SIZE;
+
+    const canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
+    const shape = Factory.createSphere();
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+
+    shape.getMaterial().setColor(new Color(1, 0.2, 1));
+
+    // For each row in canvas
+    for (let canvasY = 0; canvasY < CANVAS_SIZE; canvasY++) {
+        const worldY = HALF - canvasY * PIXEL_SIZE;
+        // For each column in canvas
+        for (let canvasX = 0; canvasX < CANVAS_SIZE; canvasX++) {
+            const worldX = -HALF + canvasX * PIXEL_SIZE;
+            const r = new Ray(RAY_ORIGIN, Operators.normalize(Operators.subtract(new Point(worldX, worldY, WALL_Z), RAY_ORIGIN)));
+            const intersections = RayOperators.intersect(shape, r);
+            const hit = RayOperators.hit(intersections);
+
+            if (hit) {
+                const point = RayOperators.position(r, hit.getT());
+                const normal = MatrixOperators.normalAt(hit.getObject(), point);
+                const eye = Operators.negate(r.getDirection());
+                const newColor = Shading.lighting(hit.getObject().getMaterial(), light, point, eye, normal);
+
+                canvas.writePixel(canvasX, canvasY, newColor);
+            }
+        }
+    }
+
+    canvas.save(`${Date.now()}_drawShadedSphere`, true);
+}
+
+// eslint-disable-next-line no-unused-vars
 async function castRayOnSphere() {
     const CANVAS_SIZE = 100;
     const RAY_ORIGIN = new Point(0, 0, -1);
@@ -102,5 +144,3 @@ async function castRayOnSphere() {
 
     canvas.save(`${Date.now()}_castRayOnSphere`, true);
 }
-
-castRayOnSphere();

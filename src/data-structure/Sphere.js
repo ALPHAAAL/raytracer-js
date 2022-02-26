@@ -7,10 +7,15 @@ export default class Sphere {
         this.origin = new Point(0, 0, 0);
         this.radius = 1;
         this.transform = factory.createTransformationMatrix();
+        this.material = factory.createMaterial();
     }
 
     setTransform(t) {
         this.transform = t;
+    }
+
+    setMaterial(m) {
+        this.material = m;
     }
 
     getTransform() {
@@ -27,6 +32,10 @@ export default class Sphere {
 
     getRadius() {
         return this.radius;
+    }
+
+    getMaterial() {
+        return this.material;
     }
 
     equal(s) {

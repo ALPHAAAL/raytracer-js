@@ -65,10 +65,18 @@ const multiply = (source, multiplier) => {
         return new Color(x * multiplier, y * multiplier, z * multiplier);
     }
 
+    if (source instanceof Vector) {
+        return new Vector(x * multiplier, y * multiplier, z * multiplier);
+    }
+
+    if (source instanceof Point) {
+        return new Point(x * multiplier, y * multiplier, z * multiplier);
+    }
+
     return new Tuple(x * multiplier, y * multiplier, z * multiplier, w * multiplier);
 };
 
-const negate = (a) => new Tuple(...a.getValues().map((val) => -val));
+const negate = (a) => multiply(a, -1);
 
 const magnitude = (a) => Math.sqrt(a.getValues().map(square).reduce((acc, cur) => acc + cur), 0);
 

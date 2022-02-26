@@ -1,9 +1,11 @@
 import test from 'ava';
 import { EPSILON } from '../../src/constants';
 import {
-    Matrix, Tuple,
+    Matrix, Point, Tuple, Vector,
 } from '../../src/data-structure';
 import MatrixOperator from '../../src/utils/matrix-operators';
+import Factory from '../../src/utils/factory';
+import Operators from '../../src/utils/operators';
 
 const epsilonEqual = (a, b) => Math.abs(a - b) < EPSILON;
 
@@ -260,4 +262,68 @@ test('Test inverse - A * B = C, C * B^-1 = A', (t) => {
     const m3 = MatrixOperator.multiply(m1, m2);
 
     t.is(MatrixOperator.multiply(m3, MatrixOperator.inverse(m2)).equal(expectedResult), true);
+});
+
+test('Test normal on a unit sphere at a point on the x-axis', (t) => {
+    const s = Factory.createSphere();
+    const expectedResult = new Vector(1, 0, 0);
+    const result = MatrixOperator.normalAt(s, new Point(1, 0, 0));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal on a unit sphere at a point on the y-axis', (t) => {
+    const s = Factory.createSphere();
+    const expectedResult = new Vector(0, 1, 0);
+    const result = MatrixOperator.normalAt(s, new Point(0, 1, 0));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal on a unit sphere at a point on the z-axis', (t) => {
+    const s = Factory.createSphere();
+    const expectedResult = new Vector(0, 0, 1);
+    const result = MatrixOperator.normalAt(s, new Point(0, 0, 1));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal on a unit sphere at a nonaxial point', (t) => {
+    const s = Factory.createSphere();
+    const expectedResult = new Vector(Math.sqrt(3) / 3, Math.sqrt(3) / 3, Math.sqrt(3) / 3);
+    const result = MatrixOperator.normalAt(s, new Point(Math.sqrt(3) / 3, Math.sqrt(3) / 3, Math.sqrt(3) / 3));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal is a normalized vector', (t) => {
+    const s = Factory.createSphere();
+    const expectedResult = Operators.normalize(new Vector(Math.sqrt(3) / 3, Math.sqrt(3) / 3, Math.sqrt(3) / 3));
+    const result = MatrixOperator.normalAt(s, new Point(Math.sqrt(3) / 3, Math.sqrt(3) / 3, Math.sqrt(3) / 3));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal on a translated sphere', (t) => {
+    const s = Factory.createSphere();
+    const transmationMatrix = Factory.createTransformationMatrix().translate(0, 1, 0);
+
+    s.setTransform(transmationMatrix);
+
+    const expectedResult = new Vector(0, 0.70711, -0.70711);
+    const result = MatrixOperator.normalAt(s, new Point(0, 1.70711, -0.70711));
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Test normal on a scale + rotateZ sphere', (t) => {
+    const s = Factory.createSphere();
+    const transmationMatrix = Factory.createTransformationMatrix().rotateZ(Math.PI / 5).scale(1, 0.5, 1);
+
+    s.setTransform(transmationMatrix);
+
+    const expectedResult = new Vector(0, 0.97014, -0.24254);
+    const result = MatrixOperator.normalAt(s, new Point(0, Math.sqrt(2) / 2, -Math.sqrt(2) / 2));
+
+    t.is(result.equal(expectedResult), true);
 });

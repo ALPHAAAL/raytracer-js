@@ -128,4 +128,24 @@ export default class MatrixOperators {
 
         return inverseMatrix;
     }
+
+    // Assuming sphere's origin is always (0, 0, 0) since our sphere is unit sphere
+    static normalAt(sphere, worldPoint) {
+        let objectPoint = worldPoint;
+
+        if (sphere.getTransform()) {
+            // Translating the point coordinates at world space to sphere's object space coordinates
+            objectPoint = MatrixOperators.multiply(MatrixOperators.inverse(sphere.getTransform()), worldPoint);
+            const objectNormal = Operators.subtract(objectPoint, sphere.getOrigin());
+            // Why need to apply inverse tranpose
+            // https://stackoverflow.com/questions/13654401/why-transform-normals-with-the-transpose-of-the-inverse-of-the-modelview-matrix
+            // https://paroj.github.io/gltut/Illumination/Tut09%20Normal%20Transformation.html
+            const worldNormal = MatrixOperators.multiply(MatrixOperators.transpose(MatrixOperators.inverse(sphere.getTransform())), objectNormal);
+            const [x, y, z] = worldNormal.getValues();
+
+            return Operators.normalize(new Vector(x, y, z));
+        }
+
+        return Operators.subtract(objectPoint, sphere.getOrigin());
+    }
 }

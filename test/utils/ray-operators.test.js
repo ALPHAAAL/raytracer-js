@@ -151,3 +151,21 @@ test('Intersect a sacled sphere with a ray', (t) => {
     t.deepEqual(result[0].getT(), 3);
     t.deepEqual(result[1].getT(), 7);
 });
+
+test('Test reflecing a vector approaching at 45 degree', (t) => {
+    const v = new Vector(1, -1, 0);
+    const n = new Vector(0, 1, 0);
+    const expectedResult = new Vector(1, 1, 0);
+    const result = RayOperators.reflect(v, n);
+
+    t.deepEqual(result.equal(expectedResult), true);
+});
+
+test('Test reflecing a vector off a slanted surface', (t) => {
+    const v = new Vector(0, -1, 0);
+    const n = new Vector(Math.sqrt(2) / 2, Math.sqrt(2) / 2, 0);
+    const expectedResult = new Vector(1, 0, 0);
+    const result = RayOperators.reflect(v, n);
+
+    t.deepEqual(result.equal(expectedResult), true);
+});

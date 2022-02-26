@@ -57,4 +57,9 @@ export default class RayOperators {
 
         return new Ray(newP, newD);
     }
+
+    // in - normal * 2 * dot(in, normal)
+    static reflect(inVector, normal) {
+        return Operators.subtract(inVector, Operators.multiply(Operators.multiply(normal, 2), Operators.dotProduct(inVector, normal)));
+    }
 }
