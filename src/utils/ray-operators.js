@@ -1,8 +1,10 @@
+import _ from 'lodash';
 import { Intersection, Ray } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
 
 export default class RayOperators {
+    // Computing the position of the ray by how far it travels (t)
     static position(ray, t) {
         return Operators.add(ray.getOrigin())(Operators.multiply(ray.getDirection(), t))();
     }
@@ -61,5 +63,33 @@ export default class RayOperators {
     // in - normal * 2 * dot(in, normal)
     static reflect(inVector, normal) {
         return Operators.subtract(inVector, Operators.multiply(Operators.multiply(normal, 2), Operators.dotProduct(inVector, normal)));
+    }
+
+    // Assuming all objects in the world are sphere for now
+    static intersectWorld(ray, world) {
+        const objects = world.getObjects();
+        const intersections = objects.map((object) => RayOperators.intersect(object, ray));
+
+        return _.flatten(intersections).sort((a, b) => a.getT() - b.getT());
+    }
+
+    static prepareComputations(intersection, ray) {
+        const t = intersection.getT();
+        const object = intersection.getObject();
+        const point = RayOperators.position(ray, t);
+        const eyeVector = Operators.negate(ray.getDirection());
+        let normalVector = MatrixOperators.normalAt(object, point);
+        const inside = Operators.dotProduct(normalVector, eyeVector) < 0;
+
+        normalVector = inside ? Operators.negate(normalVector) : normalVector;
+
+        return {
+            t,
+            object,
+            point,
+            eyeVector,
+            normalVector,
+            inside,
+        };
     }
 }

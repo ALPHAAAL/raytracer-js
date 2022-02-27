@@ -19,12 +19,24 @@ export default class Material {
         return this.ambient;
     }
 
+    setAmbient(a) {
+        this.ambient = a;
+    }
+
     getDiffuse() {
         return this.diffuse;
     }
 
+    setDiffuse(d) {
+        this.diffuse = d;
+    }
+
     getSpecular() {
         return this.specular;
+    }
+
+    setSpecular(s) {
+        this.specular = s;
     }
 
     getShininess() {

@@ -1,9 +1,28 @@
 import test from 'ava';
 import {
-    Intersection, Point, Ray, Vector,
+    Color,
+    Intersection, Point, PointLight, Ray, Vector, World,
 } from '../../src/data-structure';
 import Factory from '../../src/utils/factory';
 import RayOperators from '../../src/utils/ray-operators';
+
+const setupWorld = () => {
+    const world = new World();
+    const worldLight = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const outerSphere = Factory.createSphere();
+    const innerSphere = Factory.createSphere();
+    const outerSphereMaterial = Factory.createMaterial(new Color(0.8, 1.0, 0.6), 0.1, 0.7, 0.2);
+    const innerSphereTransformationMatrix = Factory.createTransformationMatrix().scale(0.5, 0.5, 0.5);
+
+    outerSphere.setMaterial(outerSphereMaterial);
+    innerSphere.setTransform(innerSphereTransformationMatrix);
+
+    world.setLight(worldLight);
+    world.addObject(outerSphere);
+    world.addObject(innerSphere);
+
+    return world;
+};
 
 test('Test a point from a distance', (t) => {
     const r = new Ray(new Point(2, 3, 4), new Vector(1, 0, 0));
@@ -168,4 +187,41 @@ test('Test reflecing a vector off a slanted surface', (t) => {
     const result = RayOperators.reflect(v, n);
 
     t.deepEqual(result.equal(expectedResult), true);
+});
+
+test('Test intersecting a world with ray', (t) => {
+    const world = setupWorld();
+    const r = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const result = RayOperators.intersectWorld(r, world);
+
+    t.deepEqual(result.length, 4);
+    t.deepEqual(result[0].getT(), 4);
+    t.deepEqual(result[1].getT(), 4.5);
+    t.deepEqual(result[2].getT(), 5.5);
+    t.deepEqual(result[3].getT(), 6);
+});
+
+test('Test precomputing the state of an intersection', (t) => {
+    const r = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const shape = Factory.createSphere();
+    const i = RayOperators.hit(RayOperators.intersect(shape, r));
+    const result = RayOperators.prepareComputations(i, r);
+
+    t.deepEqual(result.t, i.getT());
+    t.is(result.object.equal(i.getObject()), true);
+    t.is(result.point.equal(new Point(0, 0, -1)), true);
+    t.is(result.eyeVector.equal(new Vector(0, 0, -1)), true);
+    t.is(result.normalVector.equal(new Vector(0, 0, -1)), true);
+});
+
+test('Test precomputing the state of an intersection - when the intersection occurs on the outside', (t) => {
+    const r = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+    const shape = Factory.createSphere();
+    const i = RayOperators.hit(RayOperators.intersect(shape, r));
+    const result = RayOperators.prepareComputations(i, r);
+
+    t.deepEqual(result.inside, true);
+    t.is(result.point.equal(new Point(0, 0, 1)), true);
+    t.is(result.eyeVector.equal(new Vector(0, 0, -1)), true);
+    t.is(result.normalVector.equal(new Vector(0, 0, -1)), true);
 });

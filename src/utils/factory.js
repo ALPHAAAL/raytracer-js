@@ -1,4 +1,5 @@
 import {
+    Camera,
     Color, Material, Sphere, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
@@ -20,5 +21,9 @@ export default class Factory {
         shininess = 200.0,
     ) {
         return new Material(color, ambient, diffuse, specular, shininess);
+    }
+
+    static createCamera(hsize, vsize, fieldOfView) {
+        return new Camera(hsize, vsize, fieldOfView, Factory);
     }
 }

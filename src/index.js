@@ -8,11 +8,13 @@ import {
     Color,
     Ray,
     PointLight,
+    World,
 } from './data-structure';
 import Factory from './utils/factory';
 import MatrixOperators from './utils/matrix-operators';
 import Operators from './utils/operators';
 import RayOperators from './utils/ray-operators';
+import SceneOperators from './utils/scene-operators';
 import Shading from './utils/shading';
 
 // eslint-disable-next-line no-unused-vars
@@ -71,17 +73,18 @@ async function drawClock() {
 
 // eslint-disable-next-line no-unused-vars
 async function drawShadedSphere() {
-    const CANVAS_SIZE = 100;
+    const CANVAS_SIZE = 1000;
     const RAY_ORIGIN = new Point(0, 0, -5);
     const WALL_Z = 10;
-    const WALL_SIZE = 7;
+    const WALL_SIZE = 70;
     const HALF = WALL_SIZE / 2;
     const PIXEL_SIZE = WALL_SIZE / CANVAS_SIZE;
 
     const canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
     const shape = Factory.createSphere();
-    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const light = new PointLight(new Point(-10, 10, -10), new Color(0.1, 1, 0.2));
 
+    shape.setTransform(Factory.createTransformationMatrix().scale(2, 2, 2));
     shape.getMaterial().setColor(new Color(1, 0.2, 1));
 
     // For each row in canvas
@@ -144,3 +147,73 @@ async function castRayOnSphere() {
 
     canvas.save(`${Date.now()}_castRayOnSphere`, true);
 }
+
+// eslint-disable-next-line no-unused-vars
+async function drawWorld() {
+    const floor = Factory.createSphere();
+    // Flatten the sphere so it looks like a surface
+    floor.setTransform(Factory.createTransformationMatrix().scale(10, 0.01, 10));
+    floor.setMaterial(Factory.createMaterial());
+    floor.getMaterial().setColor(new Color(1, 0.9, 0.9));
+    floor.getMaterial().setSpecular(0);
+
+    const leftWall = Factory.createSphere();
+    leftWall.setTransform(
+        Factory.createTransformationMatrix()
+            .scale(10, 0.01, 10)
+            .rotateX(Math.PI / 2)
+            .rotateY(-Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    leftWall.setMaterial(floor.getMaterial());
+
+    const rightWall = Factory.createSphere();
+    rightWall.setTransform(
+        Factory.createTransformationMatrix()
+            .scale(10, 0.01, 10)
+            .rotateX(Math.PI / 2)
+            .rotateY(Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    rightWall.setMaterial(floor.getMaterial());
+
+    const middleSphere = Factory.createSphere();
+    middleSphere.setTransform(Factory.createTransformationMatrix().translate(-0.5, 1, 0.5));
+    middleSphere.setMaterial(Factory.createMaterial());
+    middleSphere.getMaterial().setColor(new Color(0.1, 1, 0.5));
+    middleSphere.getMaterial().setDiffuse(0.7);
+    middleSphere.getMaterial().setSpecular(0.3);
+
+    const rightSphere = Factory.createSphere();
+    rightSphere.setTransform(Factory.createTransformationMatrix().scale(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5));
+    rightSphere.setMaterial(Factory.createMaterial());
+    rightSphere.getMaterial().setColor(new Color(0.5, 1, 0.1));
+    rightSphere.getMaterial().setDiffuse(0.7);
+    rightSphere.getMaterial().setSpecular(0.3);
+
+    const leftSphere = Factory.createSphere();
+    leftSphere.setTransform(Factory.createTransformationMatrix().scale(0.333, 0.333, 0.333).translate(-1.5, 0.33, -0.75));
+    leftSphere.setMaterial(Factory.createMaterial());
+    leftSphere.getMaterial().setColor(new Color(1, 0.8, 0.1));
+    leftSphere.getMaterial().setDiffuse(0.7);
+    leftSphere.getMaterial().setSpecular(0.3);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(100, 50, Math.PI / 3);
+    camera.setTransform(SceneOperators.viewTransform(new Point(0, 1.5, -5), new Point(0, 1, 0), new Vector(0, 1, 0)));
+
+    world.setLight(light);
+    world.addObject(floor);
+    world.addObject(leftWall);
+    world.addObject(rightWall);
+    world.addObject(leftSphere);
+    world.addObject(middleSphere);
+    world.addObject(rightSphere);
+
+    const image = SceneOperators.render(camera, world);
+
+    image.save('drawWorld', true);
+}
+
+drawWorld();

@@ -29,4 +29,23 @@ export default class Shading {
 
         return Operators.add(ambient)(diffuse)(specular)();
     }
+
+    // TODO: think how to do multi light source
+    static shadeHit(world, comps) {
+        return Shading.lighting(comps.object.getMaterial(), world.getLight(), comps.point, comps.eyeVector, comps.normalVector);
+    }
+
+    static colorAt(world, ray) {
+        const intersections = RayOperators.intersectWorld(ray, world);
+        const hit = RayOperators.hit(intersections);
+
+        if (hit) {
+            const comps = RayOperators.prepareComputations(hit, ray);
+
+            return Shading.shadeHit(world, comps);
+        }
+
+        // Return black if there are no hits
+        return new Color(0, 0, 0);
+    }
 }
