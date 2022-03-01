@@ -216,4 +216,63 @@ async function drawWorld() {
     image.save('drawWorld', true);
 }
 
-drawWorld();
+// eslint-disable-next-line no-unused-vars
+async function drawEclipse() {
+    const floor = Factory.createSphere();
+    floor.setTransform(Factory.createTransformationMatrix().scale(10, 0.01, 10));
+    floor.setMaterial(Factory.createMaterial());
+    floor.getMaterial().setColor(new Color(1, 0.9, 0.9));
+    floor.getMaterial().setSpecular(0);
+
+    const leftWall = Factory.createSphere();
+    leftWall.setTransform(
+        Factory.createTransformationMatrix()
+            .scale(10, 0.01, 10)
+            .rotateX(Math.PI / 2)
+            .rotateY(-Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    leftWall.setMaterial(floor.getMaterial());
+
+    const rightWall = Factory.createSphere();
+    rightWall.setTransform(
+        Factory.createTransformationMatrix()
+            .scale(10, 0.01, 10)
+            .rotateX(Math.PI / 2)
+            .rotateY(Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    rightWall.setMaterial(floor.getMaterial());
+
+    const bigSphere = Factory.createSphere();
+    bigSphere.setTransform(Factory.createTransformationMatrix().translate(-0.5, 1, 0.5));
+    bigSphere.setMaterial(Factory.createMaterial());
+    bigSphere.getMaterial().setColor(new Color(0.5, 1, 0.1));
+    bigSphere.getMaterial().setDiffuse(0.7);
+    bigSphere.getMaterial().setSpecular(0.3);
+
+    const smallSphere = Factory.createSphere();
+    smallSphere.setTransform(Factory.createTransformationMatrix().scale(0.75, 0.75, 0.75).translate(-0.5, 1, -0.3));
+    smallSphere.setMaterial(Factory.createMaterial());
+    smallSphere.getMaterial().setColor(new Color(1, 0.8, 0.1));
+    smallSphere.getMaterial().setDiffuse(0.7);
+    smallSphere.getMaterial().setSpecular(0.3);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(100, 50, Math.PI / 3);
+    camera.setTransform(SceneOperators.viewTransform(new Point(0, 1.5, -5), new Point(0, 1, 0), new Vector(0, 1, 0)));
+
+    world.addObject(floor);
+    world.addObject(leftWall);
+    world.addObject(rightWall);
+    world.addObject(bigSphere);
+    world.addObject(smallSphere);
+    world.setLight(light);
+
+    const image = SceneOperators.render(camera, world);
+
+    await image.save('drawEclipse', true);
+}
+
+drawEclipse();

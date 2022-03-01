@@ -1,9 +1,9 @@
-import { Color } from '../data-structure';
+import { Color, Ray } from '../data-structure';
 import Operators from './operators';
 import RayOperators from './ray-operators';
 
 export default class Shading {
-    static lighting(material, light, point, eyeVector, normalVector) {
+    static lighting(material, light, point, eyeVector, normalVector, inShadow = false) {
         const effectiveColor = Operators.hadamardProduct(material.getColor(), light.getIntensity());
         const lightVector = Operators.normalize(Operators.subtract(light.position, point));
         const ambient = Operators.multiply(effectiveColor, material.getAmbient());
@@ -27,12 +27,14 @@ export default class Shading {
             }
         }
 
-        return Operators.add(ambient)(diffuse)(specular)();
+        return inShadow ? ambient : Operators.add(ambient)(diffuse)(specular)();
     }
 
     // TODO: think how to do multi light source
     static shadeHit(world, comps) {
-        return Shading.lighting(comps.object.getMaterial(), world.getLight(), comps.point, comps.eyeVector, comps.normalVector);
+        const isShadowed = Shading.isShadowed(world, comps.overPoint);
+
+        return Shading.lighting(comps.object.getMaterial(), world.getLight(), comps.point, comps.eyeVector, comps.normalVector, isShadowed);
     }
 
     static colorAt(world, ray) {
@@ -47,5 +49,19 @@ export default class Shading {
 
         // Return black if there are no hits
         return new Color(0, 0, 0);
+    }
+
+    static isShadowed(world, point) {
+        const v = Operators.subtract(world.getLight().getPosition(), point);
+        const distanceBetweenPointAndLight = Operators.magnitude(v);
+        const directionFromPointToLight = Operators.normalize(v);
+        const ray = new Ray(point, directionFromPointToLight);
+        const hit = RayOperators.hit(RayOperators.intersectWorld(ray, world));
+
+        if (hit && hit.getT() < distanceBetweenPointAndLight) {
+            return true;
+        }
+
+        return false;
     }
 }

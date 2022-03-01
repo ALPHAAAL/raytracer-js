@@ -1,6 +1,7 @@
 import test from 'ava';
 import {
     Color,
+    Intersection,
     Point,
     PointLight,
     Ray,
@@ -138,6 +139,63 @@ test('Color with an intersection behind the ray', (t) => {
 
     const expectedResult = innerSphere.getMaterial().getColor();
     const result = Shading.colorAt(w, r);
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('Lighting with eye between light and surface - with shadow', (t) => {
+    const eyeVector = new Vector(0, 0, -1);
+    const normalVector = new Vector(0, 0, -1);
+    const light = new PointLight(new Point(0, 0, -10), new Color(1, 1, 1));
+    const expectedResult = new Color(0.1, 0.1, 0.1);
+    const result = Shading.lighting(m, light, position, eyeVector, normalVector, true);
+
+    t.is(result.equal(expectedResult), true);
+});
+
+test('There is no shadow when nothing is collinear with point and light', (t) => {
+    const w = setupWorld();
+    const p = new Point(0, 10, 0);
+
+    t.deepEqual(Shading.isShadowed(w, p), false);
+});
+
+test('There is shadow when object is between with point and light', (t) => {
+    const w = setupWorld();
+    const p = new Point(10, -10, 10);
+
+    t.deepEqual(Shading.isShadowed(w, p), true);
+});
+
+test('There is no shadow when point is behind light and object', (t) => {
+    const w = setupWorld();
+    const p = new Point(-20, 20, -20);
+
+    t.deepEqual(Shading.isShadowed(w, p), false);
+});
+
+test('There is no shadow when object is behind the point', (t) => {
+    const w = setupWorld();
+    const p = new Point(-2, 2, -2);
+
+    t.deepEqual(Shading.isShadowed(w, p), false);
+});
+
+test('Shade hit is given an intersection in shadow', (t) => {
+    const w = setupWorld();
+    const s1 = Factory.createSphere();
+    const s2 = Factory.createSphere();
+    const r = new Ray(new Point(0, 0, 5), new Vector(0, 0, 1));
+    const i = new Intersection(4, s2);
+    const comp = RayOperators.prepareComputations(i, r);
+
+    s2.setTransform(Factory.createTransformationMatrix().translate(0, 0, 10));
+    w.setLight(new PointLight(new Point(0, 0, -10), new Color(1, 1, 1)));
+    w.addObject(s1);
+    w.addObject(s2);
+
+    const expectedResult = new Color(0.1, 0.1, 0.1);
+    const result = Shading.shadeHit(w, comp);
 
     t.is(result.equal(expectedResult), true);
 });

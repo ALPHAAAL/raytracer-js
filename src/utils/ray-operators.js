@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { EPSILON } from '../constants';
 import { Intersection, Ray } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
@@ -83,6 +84,8 @@ export default class RayOperators {
 
         normalVector = inside ? Operators.negate(normalVector) : normalVector;
 
+        const overPoint = Operators.add(point)(Operators.multiply(normalVector, EPSILON))();
+
         return {
             t,
             object,
@@ -90,6 +93,7 @@ export default class RayOperators {
             eyeVector,
             normalVector,
             inside,
+            overPoint,
         };
     }
 }

@@ -1,4 +1,5 @@
 import test from 'ava';
+import { EPSILON } from '../../src/constants';
 import {
     Color,
     Intersection, Point, PointLight, Ray, Vector, World,
@@ -224,4 +225,16 @@ test('Test precomputing the state of an intersection - when the intersection occ
     t.is(result.point.equal(new Point(0, 0, 1)), true);
     t.is(result.eyeVector.equal(new Vector(0, 0, -1)), true);
     t.is(result.normalVector.equal(new Vector(0, 0, -1)), true);
+});
+
+test('Test precomputing the state of an intersection - adding a slight offset to the point to prevent acne', (t) => {
+    const r = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const shape = Factory.createSphere();
+
+    shape.setTransform(Factory.createTransformationMatrix().translate(0, 0, 1));
+
+    const i = new Intersection(5, shape);
+    const comps = RayOperators.prepareComputations(i, r);
+
+    t.is((comps.overPoint.getZ() < -EPSILON / 2) && (comps.point.getZ() > comps.overPoint.getZ()), true);
 });

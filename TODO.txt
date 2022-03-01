@@ -1,1 +1,2 @@
 1. Visualize the vector / point
+2. There are many optimization to do, like caching the calculations
