@@ -1,8 +1,9 @@
 import {
     Camera,
-    Color, Material, Sphere, TransformationMatrix,
+    Color, Material, Plane, Sphere, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
+import Operators from './operators';
 
 export default class Factory {
     static createTransformationMatrix(size = 4) {
@@ -10,7 +11,7 @@ export default class Factory {
     }
 
     static createSphere() {
-        return new Sphere(Factory);
+        return new Sphere(Factory, Operators);
     }
 
     static createMaterial(
@@ -25,5 +26,9 @@ export default class Factory {
 
     static createCamera(hsize, vsize, fieldOfView) {
         return new Camera(hsize, vsize, fieldOfView, Factory);
+    }
+
+    static createPlane() {
+        return new Plane(Factory);
     }
 }

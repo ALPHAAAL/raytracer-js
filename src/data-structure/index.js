@@ -14,3 +14,4 @@ export { default as PointLight } from './PointLight';
 export { default as Material } from './Material';
 export { default as World } from './World';
 export { default as Camera } from './Camera';
+export { default as Plane } from './Plane';

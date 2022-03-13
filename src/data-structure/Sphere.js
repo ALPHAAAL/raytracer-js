@@ -1,29 +1,13 @@
-import { nanoid } from 'nanoid';
+import AbstractShape from './AbstractShape';
 import Point from './Point';
+import Intersection from './Intersection';
 
-export default class Sphere {
-    constructor(factory) {
-        this.id = nanoid();
+export default class Sphere extends AbstractShape {
+    constructor(factory, operators) {
+        super(factory);
         this.origin = new Point(0, 0, 0);
         this.radius = 1;
-        this.transform = factory.createTransformationMatrix();
-        this.material = factory.createMaterial();
-    }
-
-    setTransform(t) {
-        this.transform = t;
-    }
-
-    setMaterial(m) {
-        this.material = m;
-    }
-
-    getTransform() {
-        return this.transform;
-    }
-
-    getId() {
-        return this.id;
+        this.operators = operators;
     }
 
     getOrigin() {
@@ -34,11 +18,24 @@ export default class Sphere {
         return this.radius;
     }
 
-    getMaterial() {
-        return this.material;
+    intersect(ray) {
+        const sphereToRay = this.operators.subtract(ray.getOrigin(), this.getOrigin());
+        const a = this.operators.dotProduct(ray.getDirection(), ray.getDirection());
+        const b = 2 * this.operators.dotProduct(ray.getDirection(), sphereToRay);
+        const c = this.operators.dotProduct(sphereToRay, sphereToRay) - (this.getRadius() * this.getRadius()); // The 1 correspond to the radius ^ 2 of the unit sphere we are using
+        const discriminant = b * b - 4 * a * c;
+
+        if (discriminant < 0) {
+            return [];
+        }
+
+        const t1 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        const t2 = (-b + Math.sqrt(discriminant)) / (2 * a);
+
+        return [new Intersection(t1, this), new Intersection(t2, this)];
     }
 
-    equal(s) {
-        return this.id === s.getId();
+    normalAt(point) {
+        return this.operators.subtract(point, this.getOrigin());
     }
 }
