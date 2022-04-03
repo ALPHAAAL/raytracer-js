@@ -4,7 +4,13 @@ import RayOperators from './ray-operators';
 
 export default class Shading {
     static lighting(material, light, point, eyeVector, normalVector, inShadow = false) {
-        const effectiveColor = Operators.hadamardProduct(material.getColor(), light.getIntensity());
+        let color = material.getColor();
+
+        if (material.getPattern()) {
+            color = material.getPattern().patternAt(point);
+        }
+
+        const effectiveColor = Operators.hadamardProduct(color, light.getIntensity());
         const lightVector = Operators.normalize(Operators.subtract(light.position, point));
         const ambient = Operators.multiply(effectiveColor, material.getAmbient());
         // Cosine of the angle between light vector and normal vector

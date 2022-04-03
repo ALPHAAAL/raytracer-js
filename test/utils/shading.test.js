@@ -199,3 +199,24 @@ test('Shade hit is given an intersection in shadow', (t) => {
 
     t.is(result.equal(expectedResult), true);
 });
+
+test('Test - lighting with a pattern applied', (t) => {
+    const black = new Color(0, 0, 0);
+    const white = new Color(1, 1, 1);
+    const pattern = Factory.createStripePattern(white, black);
+    const material = Factory.createMaterial();
+    const eyeV = new Vector(0, 0, -1);
+    const normalV = new Vector(0, 0, -1);
+    const light = new PointLight(new Point(0, 0, -10), white);
+
+    material.setPattern(pattern);
+    material.setAmbient(1);
+    material.setDiffuse(0);
+    material.setSpecular(0);
+
+    const c1 = Shading.lighting(material, light, new Point(0.9, 0, 0), eyeV, normalV);
+    const c2 = Shading.lighting(material, light, new Point(1.1, 0, 0), eyeV, normalV);
+
+    t.is(c1.equal(white), true);
+    t.is(c2.equal(black), true);
+});

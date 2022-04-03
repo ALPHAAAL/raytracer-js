@@ -1,6 +1,7 @@
 import {
     Camera,
-    Color, Material, Plane, Sphere, TransformationMatrix,
+    CheckerPattern,
+    Color, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
@@ -30,5 +31,21 @@ export default class Factory {
 
     static createPlane() {
         return new Plane(Factory);
+    }
+
+    static createStripePattern(c1, c2) {
+        return new StripePattern(c1, c2, Factory, MatrixOperators);
+    }
+
+    static createGradientPattern(c1, c2) {
+        return new GradientPattern(c1, c2, Operators, Factory, MatrixOperators);
+    }
+
+    static createRignPattern(c1, c2) {
+        return new RingPattern(c1, c2, Factory, MatrixOperators);
+    }
+
+    static createCheckerPattern(c1, c2) {
+        return new CheckerPattern(c1, c2, Factory, MatrixOperators);
     }
 }

@@ -5,6 +5,13 @@ import Operators from './operators';
 import Shading from './shading';
 
 export default class SceneOperators {
+    /**
+     * P.97
+     * @param {Vector} from Where your eye want to be in the scene
+     * @param {Point} to Where your eye want to look
+     * @param {Vector} up A vector indicating which direction is up
+     * @returns
+     */
     static viewTransform(from, to, up) {
         const forward = Operators.normalize(Operators.subtract(to, from));
         const left = Operators.crossProduct(forward, Operators.normalize(up));

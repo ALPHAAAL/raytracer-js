@@ -316,4 +316,29 @@ async function drawWorldWithOnlyFloor() {
     image.save('drawWorldWithOnlyFloor', true);
 }
 
-drawWorldWithOnlyFloor();
+// eslint-disable-next-line no-unused-vars
+async function drawSphereWithPattern() {
+    const pattern = Factory.createCheckerPattern(new Color(0.1, 0.2, 0.3), new Color(0.2, 0.4, 0.6));
+    const sphere = Factory.createSphere();
+
+    sphere.setTransform(Factory.createTransformationMatrix().scale(2, 2, 2));
+    sphere.setMaterial(Factory.createMaterial());
+    sphere.getMaterial().setColor(new Color(1, 0.8, 0.1));
+    sphere.getMaterial().setDiffuse(0.7);
+    sphere.getMaterial().setSpecular(0.3);
+    sphere.getMaterial().setPattern(pattern);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(200, 200, Math.PI / 2.5);
+    camera.setTransform(SceneOperators.viewTransform(new Point(0, 0, -5), new Point(0, 0, 0), new Vector(0, 1, 0)));
+
+    world.setLight(light);
+    world.addObject(sphere);
+
+    const image = SceneOperators.render(camera, world);
+
+    image.save('drawSphereWithPattern', true);
+}
+
+drawSphereWithPattern();

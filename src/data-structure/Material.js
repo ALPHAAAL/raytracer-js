@@ -1,10 +1,11 @@
 export default class Material {
-    constructor(color, ambient, diffuse, specular, shininess) {
+    constructor(color, ambient, diffuse, specular, shininess, pattern) {
         this.color = color;
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
         this.shininess = shininess;
+        this.pattern = pattern;
     }
 
     setColor(c) {
@@ -41,5 +42,13 @@ export default class Material {
 
     getShininess() {
         return this.shininess;
+    }
+
+    setPattern(p) {
+        this.pattern = p;
+    }
+
+    getPattern() {
+        return this.pattern;
     }
 }
