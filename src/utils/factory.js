@@ -1,7 +1,7 @@
 import {
     Camera,
     CheckerPattern,
-    Color, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TestPattern, TransformationMatrix,
+    Color, Cube, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TestPattern, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
@@ -55,5 +55,9 @@ export default class Factory {
 
     static createCheckerPattern(c1, c2) {
         return new CheckerPattern(c1, c2, Factory, MatrixOperators);
+    }
+
+    static createCube(hasShadow = true) {
+        return new Cube(Factory, hasShadow);
     }
 }
