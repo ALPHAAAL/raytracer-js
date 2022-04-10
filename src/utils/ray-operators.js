@@ -62,7 +62,14 @@ export default class RayOperators {
         return _.flatten(intersections).sort((a, b) => a.getT() - b.getT());
     }
 
-    static prepareComputations(intersection, ray) {
+    static prepareComputations(intersection, ray, intersections = []) {
+        let allIntersections = intersections;
+
+        if (allIntersections.length === 0) {
+            allIntersections = [intersection];
+        }
+
+        const comps = {};
         const t = intersection.getT();
         const object = intersection.getObject();
         const point = RayOperators.position(ray, t);
@@ -72,16 +79,53 @@ export default class RayOperators {
 
         normalVector = inside ? Operators.negate(normalVector) : normalVector;
 
+        const reflectVector = RayOperators.reflect(ray.getDirection(), normalVector);
+
         const overPoint = Operators.add(point)(Operators.multiply(normalVector, EPSILON))();
+        const underPoint = Operators.subtract(point, Operators.multiply(normalVector, EPSILON));
+
+        const containers = [];
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const i of allIntersections) {
+            if (i.equal(intersection)) {
+                if (containers.length === 0) {
+                    comps.n1 = 1.0;
+                } else {
+                    comps.n1 = containers[containers.length - 1].getMaterial().getRefractiveIndex();
+                }
+            }
+
+            const index = containers.findIndex((e) => e.equal(i.getObject()));
+
+            if (index !== -1) {
+                containers.splice(index, 1);
+            } else {
+                containers.push(i.getObject());
+            }
+
+            if (i.equal(intersection)) {
+                if (containers.length === 0) {
+                    comps.n2 = 1.0;
+                } else {
+                    comps.n2 = containers[containers.length - 1].getMaterial().getRefractiveIndex();
+                }
+
+                break;
+            }
+        }
 
         return {
+            ...comps,
             t,
             object,
             point,
             eyeVector,
             normalVector,
+            reflectVector,
             inside,
             overPoint,
+            underPoint,
         };
     }
 }

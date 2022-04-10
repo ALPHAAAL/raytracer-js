@@ -1,10 +1,13 @@
 export default class Material {
-    constructor(color, ambient, diffuse, specular, shininess, pattern) {
+    constructor(color, ambient, diffuse, specular, shininess, reflextive, transparency, refractiveIndex, pattern) {
         this.color = color;
         this.ambient = ambient;
         this.diffuse = diffuse;
         this.specular = specular;
         this.shininess = shininess;
+        this.reflextive = reflextive;
+        this.transparency = transparency;
+        this.refractiveIndex = refractiveIndex;
         this.pattern = pattern;
     }
 
@@ -42,6 +45,30 @@ export default class Material {
 
     getShininess() {
         return this.shininess;
+    }
+
+    getReflective() {
+        return this.reflextive;
+    }
+
+    setReflective(r) {
+        this.reflextive = r;
+    }
+
+    getTransparency() {
+        return this.transparency;
+    }
+
+    setTransparency(t) {
+        this.transparency = t;
+    }
+
+    getRefractiveIndex() {
+        return this.refractiveIndex;
+    }
+
+    setRefractiveIndex(r) {
+        this.refractiveIndex = r;
     }
 
     setPattern(p) {

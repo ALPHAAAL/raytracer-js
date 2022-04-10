@@ -3,8 +3,8 @@ import Point from './Point';
 import Intersection from './Intersection';
 
 export default class Sphere extends AbstractShape {
-    constructor(factory, operators) {
-        super(factory);
+    constructor(factory, operators, hasShadow) {
+        super(factory, hasShadow);
         this.origin = new Point(0, 0, 0);
         this.radius = 1;
         this.operators = operators;

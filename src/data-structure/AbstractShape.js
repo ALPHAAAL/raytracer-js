@@ -1,14 +1,19 @@
 import { nanoid } from 'nanoid';
 
 export default class AbstractShape {
-    constructor(factory) {
+    constructor(factory, hasShadow) {
         this.id = nanoid();
         this.transform = factory.createTransformationMatrix();
         this.material = factory.createMaterial();
+        this.hasShadow = hasShadow;
     }
 
     getId() {
         return this.id;
+    }
+
+    getHasShadow() {
+        return this.hasShadow;
     }
 
     setTransform(t) {

@@ -19,3 +19,4 @@ export { default as StripePattern } from './StripePattern';
 export { default as GradientPattern } from './GradientPattern';
 export { default as RingPattern } from './RingPattern';
 export { default as CheckerPattern } from './CheckerPattern';
+export { default as TestPattern } from './TestPattern';

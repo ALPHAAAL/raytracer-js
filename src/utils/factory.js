@@ -1,7 +1,7 @@
 import {
     Camera,
     CheckerPattern,
-    Color, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TransformationMatrix,
+    Color, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TestPattern, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
@@ -11,8 +11,8 @@ export default class Factory {
         return new TransformationMatrix(MatrixOperators, size);
     }
 
-    static createSphere() {
-        return new Sphere(Factory, Operators);
+    static createSphere(hasShadow = true) {
+        return new Sphere(Factory, Operators, hasShadow);
     }
 
     static createMaterial(
@@ -21,16 +21,24 @@ export default class Factory {
         diffuse = 0.9,
         specular = 0.9,
         shininess = 200.0,
+        reflextive = 0.0,
+        transparency = 0.0,
+        refractiveIndex = 1.0,
+        pattern = null,
     ) {
-        return new Material(color, ambient, diffuse, specular, shininess);
+        return new Material(color, ambient, diffuse, specular, shininess, reflextive, transparency, refractiveIndex, pattern);
     }
 
     static createCamera(hsize, vsize, fieldOfView) {
         return new Camera(hsize, vsize, fieldOfView, Factory);
     }
 
-    static createPlane() {
-        return new Plane(Factory);
+    static createPlane(hasShadow = true) {
+        return new Plane(Factory, hasShadow);
+    }
+
+    static createDefaultPattern() {
+        return new TestPattern(Factory, MatrixOperators);
     }
 
     static createStripePattern(c1, c2) {

@@ -25,6 +25,15 @@ const setupWorld = () => {
     return world;
 };
 
+const createGlassSphere = () => {
+    const s = Factory.createSphere();
+
+    s.getMaterial().setTransparency(1);
+    s.getMaterial().setRefractiveIndex(1.5);
+
+    return s;
+};
+
 test('Test a point from a distance', (t) => {
     const r = new Ray(new Point(2, 3, 4), new Vector(1, 0, 0));
     const expectedResult1 = new Point(2, 3, 4);
@@ -237,4 +246,64 @@ test('Test precomputing the state of an intersection - adding a slight offset to
     const comps = RayOperators.prepareComputations(i, r);
 
     t.is((comps.overPoint.getZ() < -EPSILON / 2) && (comps.point.getZ() > comps.overPoint.getZ()), true);
+});
+
+test('Test precomputing the reflection vector', (t) => {
+    const shape = Factory.createPlane();
+    const r = new Ray(new Point(0, 1, 1), new Vector(0, -Math.sqrt(2) / 2, Math.sqrt(2) / 2));
+    const i = new Intersection(Math.sqrt(2), shape);
+    const comps = RayOperators.prepareComputations(i, r);
+    const expectedResult = new Vector(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2);
+
+    t.is(comps.reflectVector.equal(expectedResult), true);
+});
+
+// P.151 Ch11 in book
+test('Test - finding n1 and n2 at various intersections', (t) => {
+    const a = createGlassSphere();
+    const b = createGlassSphere();
+    const c = createGlassSphere();
+
+    a.setTransform(Factory.createTransformationMatrix().scale(2, 2, 2));
+    b.setTransform(Factory.createTransformationMatrix().translate(0, 0, -0.25));
+    b.getMaterial().setRefractiveIndex(2.0);
+    c.setTransform(Factory.createTransformationMatrix().translate(0, 0, 0.25));
+    c.getMaterial().setRefractiveIndex(2.5);
+
+    const r = new Ray(new Point(0, 0, -4), new Vector(0, 0, 1));
+    const i1 = new Intersection(2, a);
+    const i2 = new Intersection(2.75, b);
+    const i3 = new Intersection(3.25, c);
+    const i4 = new Intersection(4.75, b);
+    const i5 = new Intersection(5.25, c);
+    const i6 = new Intersection(6, a);
+    const xs = [i1, i2, i3, i4, i5, i6];
+    const expectedResult = [
+        [1.0, 1.5],
+        [1.5, 2.0],
+        [2.0, 2.5],
+        [2.5, 2.5],
+        [2.5, 1.5],
+        [1.5, 1.0],
+    ];
+    xs.forEach((i, index) => {
+        const { n1, n2 } = RayOperators.prepareComputations(i, r, xs);
+
+        t.is(n1, expectedResult[index][0]);
+        t.is(n2, expectedResult[index][1]);
+    });
+});
+
+test('Test - the under point is offset below the surface', (t) => {
+    const r = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const shape = createGlassSphere();
+
+    shape.setTransform(Factory.createTransformationMatrix().translate(0, 0, 1));
+
+    const i = new Intersection(5, shape);
+    const xs = [i];
+    const comps = RayOperators.prepareComputations(i, r, xs);
+
+    t.is(comps.underPoint.getZ() > EPSILON / 2, true);
+    t.is(comps.point.getZ() < comps.underPoint.getZ(), true);
 });

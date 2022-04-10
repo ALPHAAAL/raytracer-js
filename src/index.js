@@ -341,4 +341,71 @@ async function drawSphereWithPattern() {
     image.save('drawSphereWithPattern', true);
 }
 
-drawSphereWithPattern();
+// eslint-disable-next-line no-unused-vars
+async function drawWorldWithReflectiveSphere() {
+    const floor = Factory.createPlane();
+    // Flatten the sphere so it looks like a surface
+    floor.setMaterial(Factory.createMaterial());
+    floor.getMaterial().setColor(new Color(1, 0.9, 0.9));
+    floor.getMaterial().setSpecular(0);
+
+    const leftWall = Factory.createPlane();
+    leftWall.setTransform(
+        Factory.createTransformationMatrix()
+            .rotateX(Math.PI / 2)
+            .rotateY(-Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    leftWall.setMaterial(floor.getMaterial());
+
+    const rightWall = Factory.createPlane();
+    rightWall.setTransform(
+        Factory.createTransformationMatrix()
+            .rotateX(Math.PI / 2)
+            .rotateY(Math.PI / 4)
+            .translate(0, 0, 5),
+    );
+    rightWall.setMaterial(floor.getMaterial());
+
+    const middleSphere = Factory.createSphere();
+    middleSphere.setTransform(Factory.createTransformationMatrix().translate(-0.5, 1, 0.5));
+    middleSphere.setMaterial(Factory.createMaterial());
+    middleSphere.getMaterial().setColor(new Color(0.1, 1, 0.5));
+    middleSphere.getMaterial().setDiffuse(0.7);
+    middleSphere.getMaterial().setSpecular(0.3);
+    middleSphere.getMaterial().setReflective(0.5);
+
+    const rightSphere = Factory.createSphere();
+    rightSphere.setTransform(Factory.createTransformationMatrix().scale(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5));
+    rightSphere.setMaterial(Factory.createMaterial());
+    rightSphere.getMaterial().setColor(new Color(0.5, 1, 0.1));
+    rightSphere.getMaterial().setDiffuse(0.7);
+    rightSphere.getMaterial().setSpecular(0.3);
+    rightSphere.getMaterial().setReflective(0.5);
+
+    const leftSphere = Factory.createSphere();
+    leftSphere.setTransform(Factory.createTransformationMatrix().scale(0.333, 0.333, 0.333).translate(-1.5, 0.33, -0.75));
+    leftSphere.setMaterial(Factory.createMaterial());
+    leftSphere.getMaterial().setColor(new Color(1, 0.8, 0.1));
+    leftSphere.getMaterial().setDiffuse(0.7);
+    leftSphere.getMaterial().setSpecular(0.3);
+    leftSphere.getMaterial().setReflective(0.5);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(300, 150, Math.PI / 3);
+    camera.setTransform(SceneOperators.viewTransform(new Point(0, 1.5, -5), new Point(0, 1, 0), new Vector(0, 1, 0)));
+
+    world.setLight(light);
+    world.addObject(floor);
+    world.addObject(leftWall);
+    world.addObject(rightWall);
+    world.addObject(leftSphere);
+    world.addObject(middleSphere);
+    world.addObject(rightSphere);
+
+    const image = SceneOperators.render(camera, world);
+
+    image.save('drawWorldWithReflectiveSphere', true);
+}
+
