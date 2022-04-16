@@ -1,3 +1,5 @@
 1. Visualize the vector / point
 2. There are many optimization to do, like caching the calculations
 3. Maybe think how to reduce uses of division? (Like storing inverse of a value instead of doing division all the time)
+4. Fix floating point issue
+5. Create util for color code

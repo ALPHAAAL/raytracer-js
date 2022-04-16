@@ -1,5 +1,10 @@
 import Matrix from './Matrix';
 
+// https://jsantell.com/matrix-transformations
+// Maybe we can cache the matrix calculation
+// eg. To transform a point, we do T(translate) * R(rotate) * S(scale) * v(point)
+// Instead of recalculating T * R * S for each v, we can store a M = T * R * S
+// Let's say we want to transform a cube, we can mulitply M to each vertex of the cube
 export default class TransformationMatrix extends Matrix {
     constructor(matrixOperator, size = 4) {
         super(size, true);

@@ -35,13 +35,14 @@ export default class Cube extends AbstractShape {
     checkAxis(origin, direction) {
         const tminNumerator = -1 - origin;
         const tMaxNumerator = 1 - origin;
-        // Pre-computing this to avoid redundant divsion
-        // Since division is slower than multiplication
-        const directionInverse = 1 / direction;
         let tmin;
         let tmax;
 
         if (Math.abs(direction) >= EPSILON) {
+            // Pre-computing this to avoid redundant divsion
+            // Since division is slower than multiplication
+            const directionInverse = 1 / direction;
+
             tmin = tminNumerator * directionInverse;
             tmax = tMaxNumerator * directionInverse;
         } else {

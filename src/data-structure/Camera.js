@@ -1,3 +1,6 @@
+// Kinda useful resource for camera
+// https://jsantell.com/3d-projection/
+
 export default class Camera {
     constructor(hsize, vsize, fieldOfView, factory) {
         this.hsize = hsize;

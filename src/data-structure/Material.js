@@ -1,3 +1,8 @@
+// https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/Basic_theory#rasterization
+// Diffuse: A distant directional light, like the sun.
+// Specular: A point of light, just like a light bulb in a room or a flash light.
+// Ambient: The constant light applied to everything on the scene.
+// Emissive: The light emitted directly by the object.
 export default class Material {
     constructor(color, ambient, diffuse, specular, shininess, reflextive, transparency, refractiveIndex, pattern) {
         this.color = color;

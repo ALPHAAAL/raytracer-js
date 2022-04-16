@@ -409,3 +409,37 @@ async function drawWorldWithReflectiveSphere() {
     image.save('drawWorldWithReflectiveSphere', true);
 }
 
+async function drawWorldWithCube() {
+    const backdrop = Factory.createPlane();
+
+    backdrop.setTransform(Factory.createTransformationMatrix().rotateX(Math.PI / 2));
+    // Setting a translate here due to floating point error
+    // https://forum.raytracerchallenge.com/thread/43/checker-pattern-acne
+    backdrop.setTransform(Factory.createTransformationMatrix().translate(0, 0.01, 0));
+    backdrop.getMaterial().setColor(new Color(241 / 255, 145 / 255, 155 / 255));
+
+    const cube = Factory.createCube();
+    const material = Factory.createMaterial();
+
+    material.setReflective(0.7);
+    material.setTransparency(0.7);
+    material.setRefractiveIndex(1.2);
+
+    cube.setTransform(Factory.createTransformationMatrix().translate(-0.5, 1, 0.5));
+    cube.setMaterial(material);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(150, 150, Math.PI / 3);
+    camera.setTransform(SceneOperators.viewTransform(new Point(-5, 3, -5), new Point(0, 1, 0), new Vector(0, 1, 0)));
+
+    world.setLight(light);
+    world.addObject(backdrop);
+    world.addObject(cube);
+
+    const image = SceneOperators.render(camera, world);
+
+    image.save('drawWorldWithCube', true);
+}
+
+drawWorldWithCube();
