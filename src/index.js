@@ -442,4 +442,40 @@ async function drawWorldWithCube() {
     image.save('drawWorldWithCube', true);
 }
 
-drawWorldWithCube();
+async function drawWorldWithCone() {
+    const backdrop = Factory.createPlane();
+    const pattern = Factory.createCheckerPattern(new Color(0.1, 0.2, 0.3), new Color(0.2, 0.4, 0.6));
+
+    backdrop.setTransform(Factory.createTransformationMatrix().rotateX(Math.PI / 2));
+    // Setting a translate here due to floating point error
+    // https://forum.raytracerchallenge.com/thread/43/checker-pattern-acne
+    backdrop.setTransform(Factory.createTransformationMatrix().translate(0, 0.01, 0));
+    backdrop.getMaterial().setColor(new Color(241 / 255, 145 / 255, 155 / 255));
+
+    const cone = Factory.createCone(-1, 0.01, true);
+    const material = Factory.createMaterial();
+
+    // If the below is enabled, the program will crash with maximum callstack error
+    // material.setReflective(0.7);
+    // material.setTransparency(0.7);
+    // material.setRefractiveIndex(1.2);
+
+    cone.setTransform(Factory.createTransformationMatrix().translate(0, 1, 0).scale(2, 3, 2));
+    cone.setMaterial(material);
+    cone.getMaterial().setPattern(pattern);
+
+    const light = new PointLight(new Point(-10, 10, -10), new Color(1, 1, 1));
+    const world = new World();
+    const camera = Factory.createCamera(150, 150, Math.PI / 3);
+    camera.setTransform(SceneOperators.viewTransform(new Point(-5, 3, -5), new Point(0, 1, 0), new Vector(0, 1, 0)));
+
+    world.setLight(light);
+    world.addObject(backdrop);
+    world.addObject(cone);
+
+    const image = SceneOperators.render(camera, world);
+
+    image.save('drawWorldWithCone', true);
+}
+
+drawWorldWithCone();

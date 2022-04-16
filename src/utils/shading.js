@@ -89,7 +89,7 @@ export default class Shading {
      * @param {number} remaining the number of reflection
      * @returns {Color}
      */
-    static reflectedColor(world, comps, remaining = 5) {
+    static reflectedColor(world, comps, remaining = 3) {
         if (remaining < 1) {
             return new Color(0, 0, 0);
         }

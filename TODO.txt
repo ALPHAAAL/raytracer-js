@@ -3,3 +3,4 @@
 3. Maybe think how to reduce uses of division? (Like storing inverse of a value instead of doing division all the time)
 4. Fix floating point issue
 5. Create util for color code
+6. Handle maximum callstack issue / segmentation fault

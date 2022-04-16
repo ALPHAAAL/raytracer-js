@@ -1,7 +1,7 @@
 import {
     Camera,
     CheckerPattern,
-    Color, Cube, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TestPattern, TransformationMatrix,
+    Color, Cone, Cube, Cylinder, GradientPattern, Material, Plane, RingPattern, Sphere, StripePattern, TestPattern, TransformationMatrix,
 } from '../data-structure';
 import MatrixOperators from './matrix-operators';
 import Operators from './operators';
@@ -59,5 +59,13 @@ export default class Factory {
 
     static createCube(hasShadow = true) {
         return new Cube(Factory, hasShadow);
+    }
+
+    static createCylinder(minimum = -Infinity, maximum = Infinity, closed = false, radius = 1, hasShadow = true) {
+        return new Cylinder(radius, minimum, maximum, closed, hasShadow, Factory);
+    }
+
+    static createCone(minimum = -Infinity, maximum = Infinity, closed = false, radius = 1, hasShadow = true) {
+        return new Cone(radius, minimum, maximum, closed, hasShadow, Factory);
     }
 }

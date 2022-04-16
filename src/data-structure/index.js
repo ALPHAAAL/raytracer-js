@@ -21,3 +21,5 @@ export { default as RingPattern } from './RingPattern';
 export { default as CheckerPattern } from './CheckerPattern';
 export { default as TestPattern } from './TestPattern';
 export { default as Cube } from './Cube';
+export { default as Cylinder } from './Cylinder';
+export { default as Cone } from './Cone';

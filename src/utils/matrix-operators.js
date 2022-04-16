@@ -67,6 +67,10 @@ export default class MatrixOperators {
             return m.getElement(0, 0) * m.getElement(1, 1) - m.getElement(0, 1) * m.getElement(1, 0);
         }
 
+        if (m.getSize() === 1) {
+            return m.getElement(0, 0);
+        }
+
         let result = 0;
 
         for (let i = 0; i < m.getSize(); i++) {
